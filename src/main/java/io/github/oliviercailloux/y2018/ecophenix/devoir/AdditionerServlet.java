@@ -3,11 +3,9 @@ package io.github.oliviercailloux.y2018.ecophenix.devoir;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,20 +21,20 @@ public class AdditionerServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		resp.setContentType(MediaType.TEXT_PLAIN);
-		resp.setLocale(Locale.ENGLISH);
-
-		final ServletOutputStream out = resp.getOutputStream();
 		
+		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		resp.setContentType("text/plain");
+		resp.setContentType(MediaType.TEXT_PLAIN);
+
 		try {
-		int somme = 0;
+			
 		int parametre1 = Integer.parseInt(req.getParameter("param1"));
 		int parametre2 = Integer.parseInt(req.getParameter("param2"));		
 		LOGGER.info("paramètre 1 :"+ parametre1 + " et paramètre 2 :" + parametre2);
-		somme = parametre1 + parametre2;
+		
+		int somme = parametre1 + parametre2;
 		resp.setStatus(200);
-		out.println("la somme est  :" +somme);
+		resp.getWriter().println("la somme est  :" +somme );
 		
 		} catch (NumberFormatException e) {
 				try {
@@ -44,22 +42,21 @@ public class AdditionerServlet extends HttpServlet {
 					if (this.defaultparam!= null) {
 						int parametre2 = this.defaultparam;
 						int somme = parametre1 + parametre2;
-						LOGGER.info("valeur par défaut est :" + defaultparam);
+						LOGGER.info("La valeur par défaut est :" + defaultparam);
 						resp.setStatus(200);
-						out.println(somme);
+						resp.getWriter().println(somme);
 					}
 					else {
 						
-						LOGGER.warning("Exécution impossible, paramètre manquant");
-						throw new NumberFormatException("NumberFormatException thrown");
-						
+						LOGGER.warning("Exécution impossible, paramètre 2 manquant.");
+						throw new NumberFormatException("NumberFormatException thrown");					
 					}
 					
 				 } catch (NumberFormatException e2) {
 					// TODO: handle exception
-					LOGGER.warning("les paramètres ne sont pas saisis correctement !!");
+					LOGGER.warning("Exécution impossible, paramètres manquants.");
 					resp.setStatus(400);
-					out.println("Exécution impossible, paramètre manquant");
+					resp.getWriter().println("Exécution impossible, paramètre manquant.");
 				}
 			
 		}
@@ -68,19 +65,19 @@ public class AdditionerServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		resp.setContentType("text/plain");
 		resp.setContentType(MediaType.TEXT_PLAIN);
-		
+			
 		try {
-			int paramx= Integer.parseInt("param2");
-			this.defaultparam = paramx ;
-			LOGGER.fine("valeur par défaut est :" + defaultparam);
+			defaultparam = Integer.parseInt(req.getParameter("param2"));
+			//this.defaultparam = paramx ;
+			LOGGER.info("valeur par défaut est :" + defaultparam);
 			resp.setStatus((200));
-			resp.getWriter().println("OK");
+			resp.getWriter().println("ok");
 		} catch (NumberFormatException e) {
 			// TODO: handle exception
-			LOGGER.warning("Param erroné");
 			resp.setStatus((400));
-			resp.getWriter().println("Exécution impossible, paramètre manquant");
+			resp.getWriter().println("Exécution impossible, paramètre manquant.");
 		}
 	}
 }
